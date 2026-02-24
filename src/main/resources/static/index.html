@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tanzu Platform Demo</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <header class="banner">
+            <div class="banner-content">
+                <img src="images/tanzu-logo.png" alt="Tanzu" class="banner-logo">
+                <h1>TANZU PLATFORM DEMO</h1>
+                <img src="images/tanzu-logo.png" alt="Tanzu" class="banner-logo">
+            </div>
+        </header>
+        <main class="content">
+            <div class="response-card">
+                <h2>Greeting message</h2>
+                <div v-if="loading" class="loading">Loading...</div>
+                <div v-else-if="error" class="error">{{ error }}</div>
+                <div v-else class="response-text">{{ message }}</div>
+                <button @click="fetchHello" class="refresh-btn">Refresh</button>
+            </div>
+            <div class="response-card version-card">
+                <h2>Runtime Info</h2>
+                <div v-if="actuatorLoading" class="loading">Loading...</div>
+                <div v-else-if="actuatorError" class="error">{{ actuatorError }}</div>
+                <div v-else-if="actuatorInfo" class="info-list">
+                    <div class="info-item">
+                        <span class="info-label">Spring Boot:</span>
+                        <span class="info-value">{{ actuatorInfo.app?.['spring-boot']?.version || 'N/A' }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Java:</span>
+                        <span class="info-value">{{ actuatorInfo.java?.version || 'N/A' }} ({{ actuatorInfo.java?.vendor?.name || 'N/A' }})</span>
+                    </div>
+                </div>
+                <div v-else class="info-empty">No info available</div>
+            </div>
+        </main>
+        <section class="cfenv-section">
+            <div class="cfenv-container">
+                <div class="cfenv-card">
+                    <h2>Application Info</h2>
+                    <div v-if="cfenvLoading" class="loading">Loading...</div>
+                    <div v-else-if="cfenvError" class="error">{{ cfenvError }}</div>
+                    <div v-else-if="cfenvInfo" class="info-list">
+                        <div class="info-item">
+                            <span class="info-label">Name:</span>
+                            <span class="info-value">{{ cfenvInfo.applicationName || 'N/A' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">App ID:</span>
+                            <span class="info-value">{{ cfenvInfo.applicationId || 'N/A' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Instance:</span>
+                            <span class="info-value">{{ cfenvInfo.instanceIndex || 'N/A' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Space:</span>
+                            <span class="info-value">{{ cfenvInfo.spaceName || 'N/A' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">URIs:</span>
+                            <span class="info-value">{{ cfenvInfo.uris ? cfenvInfo.uris.join(', ') : 'N/A' }}</span>
+                        </div>
+                    </div>
+                    <div v-else class="info-empty">Not running on Cloud Foundry</div>
+                </div>
+                <div class="cfenv-card">
+                    <h2>Bound Services</h2>
+                    <div v-if="cfenvLoading" class="loading">Loading...</div>
+                    <div v-else-if="cfenvError" class="error">{{ cfenvError }}</div>
+                    <div v-else-if="cfenvInfo && cfenvInfo.services && cfenvInfo.services.length > 0" class="services-list">
+                        <div v-for="service in cfenvInfo.services" :key="service.name" class="service-item">
+                            <div class="service-name">{{ service.name }}</div>
+                            <div class="service-details">
+                                <span class="service-label">{{ service.label }}</span>
+                                <span class="service-plan">{{ service.plan }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else class="info-empty">No services bound</div>
+                </div>
+            </div>
+            <button @click="fetchCfEnv" class="refresh-btn cfenv-refresh">Refresh CF Environment</button>
+        </section>
+    </div>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+applications:
+  - name: tp-demo
+    memory: 1G
+    instances: 1
+    buildpacks:
+      - java_buildpack_offline
+    path: target/tp-demo-0.0.1-SNAPSHOT.jar
+    env:
+      JBP_CONFIG_OPEN_JDK_JRE: '{jre: {version: 11.+}}'
+      SPRING_PROFILES_ACTIVE: default
+    health-check-type: port
+    disk-quota: 1G
